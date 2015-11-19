@@ -52,6 +52,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
+    private static String urlLogin = "http://10.0.2.2/auth/login";
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
