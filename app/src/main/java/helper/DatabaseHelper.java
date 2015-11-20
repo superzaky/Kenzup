@@ -1,4 +1,4 @@
-package database;
+package helper;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -26,7 +26,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + TABLE_USERS + " (" +
                     DatabaseEntry.KEY_ID + " INTEGER PRIMARY KEY, " +
                     DatabaseEntry.KEY_NAME + " TEXT, " +
-                    DatabaseEntry.KEY_EMAIL + "TEXT, " +
+                    DatabaseEntry.KEY_EMAIL + "TEXT UNIQUE, " +
+                    DatabaseEntry.KEY_UID + "TEXT, " +
                     DatabaseEntry.KEY_PASSWORD + "TEXT" +
                     DatabaseEntry.KEY_CREATED_AT + "DATETIME" +
                     DatabaseEntry.KEY_UPDATED_AT + "DATETIME" + ");";
@@ -42,7 +43,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(DatabaseEntry.KEY_NAME, user.getName());
-//        values.put(KEY_PH_NO, user.getEmail());
+        values.put(DatabaseEntry.KEY_EMAIL, user.getEmail());
+        values.put(DatabaseEntry.KEY_UID, user.getEmail());
 //        values.put(KEY_EMAIL, user.getPassword());
         // Inserting Row
         db.insert(TABLE_USERS, null, values);
@@ -93,6 +95,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // USERS Table - column names
         private static final String KEY_NAME = "name";
         private static final String KEY_EMAIL = "email";
+        private static final String KEY_UID = "uid";
         private static final String KEY_PASSWORD = "password";
 
     }
