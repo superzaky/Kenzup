@@ -28,9 +28,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     DatabaseEntry.KEY_NAME + " TEXT, " +
                     DatabaseEntry.KEY_EMAIL + "TEXT UNIQUE, " +
                     DatabaseEntry.KEY_UID + "TEXT, " +
-                    DatabaseEntry.KEY_PASSWORD + "TEXT" +
-                    DatabaseEntry.KEY_CREATED_AT + "DATETIME" +
-                    DatabaseEntry.KEY_UPDATED_AT + "DATETIME" + ");";
+                    DatabaseEntry.KEY_CREATED_AT + "DATETIME" + ");";
 
 
     public DatabaseHelper(Context context) {
@@ -38,13 +36,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Adding new user
-    public void addUser(User user) {
+    public void addUser(String name, String email, String uid, String created_at) {
         System.out.println("adding user");
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(DatabaseEntry.KEY_NAME, user.getName());
-        values.put(DatabaseEntry.KEY_EMAIL, user.getEmail());
-        values.put(DatabaseEntry.KEY_UID, user.getEmail());
+        values.put(DatabaseEntry.KEY_NAME, name);
+        values.put(DatabaseEntry.KEY_EMAIL, email);
+        values.put(DatabaseEntry.KEY_UID, uid);
+        values.put(DatabaseEntry.KEY_CREATED_AT, created_at);
 //        values.put(KEY_EMAIL, user.getPassword());
         // Inserting Row
         db.insert(TABLE_USERS, null, values);
