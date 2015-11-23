@@ -70,9 +70,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         ContentValues values = new ContentValues();
 
         String email = etEmail.getText().toString();
-        System.out.println("email zaky");
-        System.out.println(email);
-        System.out.println("email zaky2");
         String name = etUsername.getText().toString();
         String password = etPassword.getText().toString();
         String confirmPassword = etConfirmPassword.getText().toString();

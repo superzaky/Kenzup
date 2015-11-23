@@ -31,12 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         String ip = "";
         ip = getLocalIpAddress();
-        System.out.println("zaky");
-        System.out.println(ip);
-        System.out.println("zaky2");
 
-
-        System.out.println("wa");
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
