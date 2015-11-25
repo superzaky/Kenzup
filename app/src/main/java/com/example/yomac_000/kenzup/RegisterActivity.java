@@ -71,8 +71,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         String email = etEmail.getText().toString();
         String name = etUsername.getText().toString();
-        String password = etPassword.getText().toString();
-        String confirmPassword = etConfirmPassword.getText().toString();
+        String password = etPassword.getText().toString().trim();
+        String confirmPassword = etConfirmPassword.getText().toString().trim();
 //        user.setEmail(email);
 //        user.setPassword(password);
 //        user.setName(name);
@@ -83,11 +83,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     .show();
         }
 
-//        if (password != confirmPassword) {
-//            Toast.makeText(getApplicationContext(),
-//                    "Passwords do not match", Toast.LENGTH_LONG)
-//                    .show();
-//        }
+        if (!password.equals(confirmPassword)) {
+            Toast.makeText(getApplicationContext(),
+                    "Passwords do not match", Toast.LENGTH_LONG)
+                    .show();
+        }
         else {
 
             registerUser(name, email, password, confirmPassword, name);
@@ -115,6 +115,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 hideDialog();
 
                 try {
+                    //Removing hidden characters
+                    response = response.substring(response.indexOf("{"), response.lastIndexOf("}") + 1);
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
                     if (!error) {

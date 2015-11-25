@@ -2,9 +2,13 @@ package helper;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+import android.util.Log;
+
+import java.util.HashMap;
 
 import model.User;
 
@@ -12,90 +16,106 @@ import model.User;
  * Created by yomac_000 on 7-11-2015.
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
-    // Logcat tag
-    private static final String LOG = "DatabaseHelper";
 
-    private static final int DATABASE_VERSION = 2;
+    private static final String TAG = DatabaseHelper.class.getSimpleName();
+
+    // All Static variables
+    // Database Version
+    private static final int DATABASE_VERSION = 4;
+
+    // Database Name
     private static final String DATABASE_NAME = "Kenzup.db";
 
-    public static final String TABLE_USERS = "users";
+    // Login table name
+    private static final String TABLE_USER = "user";
 
-
-
-    private static final String CREATE_TABLE_USERS =
-            "CREATE TABLE " + TABLE_USERS + " (" +
-                    DatabaseEntry.KEY_ID + " INTEGER PRIMARY KEY, " +
-                    DatabaseEntry.KEY_NAME + " TEXT, " +
-                    DatabaseEntry.KEY_EMAIL + "TEXT UNIQUE, " +
-                    DatabaseEntry.KEY_UID + "TEXT, " +
-                    DatabaseEntry.KEY_CREATED_AT + "DATETIME" + ");";
-
+    // Login Table Columns names
+    private static final String KEY_ID = "id";
+    private static final String KEY_NAME = "name";
+    private static final String KEY_EMAIL = "email";
+    private static final String KEY_UID = "uid";
+    private static final String KEY_CREATED_AT = "created_at";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    // Adding new user
-    public void addUser(String name, String email, String uid, String created_at) {
-        System.out.println("adding user");
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(DatabaseEntry.KEY_NAME, name);
-        values.put(DatabaseEntry.KEY_EMAIL, email);
-        values.put(DatabaseEntry.KEY_UID, uid);
-        values.put(DatabaseEntry.KEY_CREATED_AT, created_at);
-//        values.put(KEY_EMAIL, user.getPassword());
-        // Inserting Row
-        db.insert(TABLE_USERS, null, values);
-        //db.close(); // Closing database connection
-        System.out.println("adding user DONE");
-    }
-
-    // Get all users
-//    public void getUsers() {
-//        System.out.println("adding user");
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        ContentValues values = new ContentValues();
-//        values.put(DatabaseEntry.KEY_NAME, user.getName());
-////        values.put(KEY_PH_NO, user.getEmail());
-////        values.put(KEY_EMAIL, user.getPassword());
-//        // Inserting Row
-//        db.insert(TABLE_USERS, null, values);
-//        //db.close(); // Closing database connection
-//        System.out.println("adding user DONE");
-//    }
-
+    // Creating Tables
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // creating required tables
-        db.execSQL(CREATE_TABLE_USERS);
+        String CREATE_LOGIN_TABLE = "CREATE TABLE " + TABLE_USER + "("
+                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT,"
+                + KEY_EMAIL + " TEXT UNIQUE," + KEY_UID + " TEXT,"
+                + KEY_CREATED_AT + " TEXT" + ")";
+        db.execSQL(CREATE_LOGIN_TABLE);
 
+        Log.d(TAG, "Database tables created");
     }
 
+    // Upgrading database
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // on upgrade drop older tables
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
-        // create new tables
+        // Drop older table if existed
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
+
+        // Create tables again
         onCreate(db);
     }
 
-    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        onUpgrade(db, oldVersion, newVersion);
+    /**
+     * Storing user details in database
+     * */
+    public void addUser(String name, String email, String uid, String created_at) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_NAME, name); // Name
+        values.put(KEY_EMAIL, email); // Email
+        values.put(KEY_UID, uid); // Email
+        values.put(KEY_CREATED_AT, created_at); // Created At
+
+        // Inserting Row
+        long id = db.insert(TABLE_USER, null, values);
+        db.close(); // Closing database connection
+
+        Log.d(TAG, "New user inserted into sqlite: " + id);
     }
 
-    /* Inner class that defines the table contents */
-    public static abstract class DatabaseEntry implements BaseColumns {
-        // Common column names
-        private static final String KEY_ID = "id";
-        private static final String KEY_CREATED_AT = "created_at";
-        private static final String KEY_UPDATED_AT = "updated_at";
+    /**
+     * Getting user data from database
+     * */
+    public HashMap<String, String> getUserDetails() {
+        HashMap<String, String> user = new HashMap<String, String>();
+        String selectQuery = "SELECT  * FROM " + TABLE_USER;
 
-        // USERS Table - column names
-        private static final String KEY_NAME = "name";
-        private static final String KEY_EMAIL = "email";
-        private static final String KEY_UID = "uid";
-        private static final String KEY_PASSWORD = "password";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // Move to first row
+        cursor.moveToFirst();
+        if (cursor.getCount() > 0) {
+            user.put("name", cursor.getString(1));
+            user.put("email", cursor.getString(2));
+            user.put("uid", cursor.getString(3));
+            user.put("created_at", cursor.getString(4));
+        }
+        cursor.close();
+        db.close();
+        // return user
+        Log.d(TAG, "Fetching user from Sqlite: " + user.toString());
 
+        return user;
     }
+
+    /**
+     * Re crate database Delete all tables and create them again
+     * */
+    public void deleteUsers() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Delete All Rows
+        db.delete(TABLE_USER, null, null);
+        db.close();
+
+        Log.d(TAG, "Deleted all user info from sqlite");
+    }
+
 }
