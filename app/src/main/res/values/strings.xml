@@ -18,13 +18,14 @@
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
     <string name="hint_name">Fullname</string>
-    <string name="btn_login">LOGIN</string>
-    <string name="btn_register">REGISTER</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_register">Register</string>
     <string name="btn_link_to_register">Not a member? Sign up now.</string>
     <string name="btn_link_to_login">Already registred! Login Me.</string>
     <string name="welcome">Welcome</string>
     <string name="btn_logout">Logout</string>
     <string name="btn_image">Images</string>
+    <string name="btn_weather">Weather</string>
     <string name="name">Fullname</string>
 
 
@@ -38,4 +39,25 @@
     <string name="notification_share_link">Share link</string>
     <string name="notifaction_success">Successfully uploaded</string>
     <string name="notification_progress">Uploading image...</string>
+
+
+
+        <string name="change_city">Change city</string>
+
+        <!-- Put your own APP ID here -->
+        <string name="open_weather_maps_app_id">159b7a0777224c6c95af84dbff07640d</string>
+
+        <string name="weather_sunny">&#xf00d;</string>
+        <string name="weather_clear_night">&#xf02e;</string>
+
+        <string name="weather_foggy">&#xf014;</string>
+        <string name="weather_cloudy">&#xf013;</string>
+        <string name="weather_rainy">&#xf019;</string>
+        <string name="weather_snowy">&#xf01b;</string>
+        <string name="weather_thunder">&#xf01e;</string>
+        <string name="weather_drizzle">&#xf01c;</string>
+
+        <string name="place_not_found">Sorry, no weather data found.</string>
+
+
 </resources>
