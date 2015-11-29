@@ -119,6 +119,14 @@ public class ImageActivity extends AppCompatActivity {
         upload.description = uploadDesc.getText().toString();
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(getApplicationContext(),
+                MainActivity.class);
+        startActivity(i);
+        finish();
+    }
+
     private class UiCallback implements Callback<ImageResponse> {
 
         @Override

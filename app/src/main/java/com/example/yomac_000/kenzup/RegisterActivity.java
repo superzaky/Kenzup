@@ -185,6 +185,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(getApplicationContext(),
+                MainActivity.class);
+        startActivity(i);
+        finish();
+    }
     private void showDialog() {
         if (!pDialog.isShowing())
             pDialog.show();
