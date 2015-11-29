@@ -107,7 +107,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         showDialog();
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_REGISTER, new Response.Listener<String>() {
+                AppConfig.getUrlRegister(), new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
