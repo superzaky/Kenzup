@@ -27,9 +27,10 @@
     <string name="btn_image">Images</string>
     <string name="btn_weather">Weather</string>
     <string name="name">Fullname</string>
+    <string name="app_register">Registration form</string>
 
 
-
+    <string name="app_image">Upload an image</string>
     <string name="hello_world">Hello world!</string>
     <string name="choose">Choose Image</string>
     <string name="upload">Upload</string>
@@ -41,7 +42,7 @@
     <string name="notification_progress">Uploading image...</string>
 
 
-
+    <string name="app_weather">Weather information</string>
         <string name="change_city">Change city</string>
 
         <!-- Put your own APP ID here -->

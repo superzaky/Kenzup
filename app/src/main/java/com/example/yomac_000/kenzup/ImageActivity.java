@@ -39,8 +39,6 @@ public class ImageActivity extends AppCompatActivity {
     EditText uploadTitle;
     @Bind(R.id.editText_upload_desc)
     EditText uploadDesc;
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
 
     private Upload upload; // Upload object containging image and meta data
     private File chosenFile; //chosen file from intent
@@ -50,8 +48,6 @@ public class ImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image);
         ButterKnife.bind(this);
-
-        //setSupportActionBar(toolbar);
     }
 
     @Override

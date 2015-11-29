@@ -5,5 +5,5 @@
     android:layout_height="match_parent"
     tools:context="ah.hathi.simpleweather.WeatherActivity"
     tools:ignore="MergeRootFrame"
-    android:background="#FF0099CC"
+    android:background="#9c52c4"
     />
