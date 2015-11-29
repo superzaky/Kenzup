@@ -17,6 +17,8 @@ public class MainActivity extends Activity {
     private TextView txtName;
     private TextView txtEmail;
     private Button btnLogout;
+    private Button btnLinkToImage;
+    private Button btnLinkToWeather;
 
     private DatabaseHelper db;
     private SessionManager session;
@@ -31,6 +33,8 @@ public class MainActivity extends Activity {
         txtName = (TextView) findViewById(R.id.name);
         txtEmail = (TextView) findViewById(R.id.email);
         btnLogout = (Button) findViewById(R.id.btnLogout);
+        btnLinkToImage = (Button) findViewById(R.id.btnLinkToImageScreen);
+        btnLinkToWeather = (Button) findViewById(R.id.btnLinkToWeatherScreen);
 
         // SqLite database handler
         db = new DatabaseHelper(getApplicationContext());
@@ -57,6 +61,28 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 logoutUser();
+            }
+        });
+
+        // Link to Image Screen
+        btnLinkToImage.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(),
+                        ImageActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
+
+        // Link to Weather Screen
+        btnLinkToWeather.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(),
+                        WeatherActivity.class);
+                startActivity(i);
+                finish();
             }
         });
     }
