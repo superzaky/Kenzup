@@ -117,17 +117,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                 try {
                     JSONObject user = new JSONObject(response);
-
                     String uid = user.getString("id");
                     String name = user.getString("name");
                     String email = user.getString("email");
-                    String created_at = user.getString("created_at");
 
                     // Inserting row in users table
-                    db.addUser(name, email, uid, created_at);
-
+                    db.addUser(name, email, uid);
+                    System.out.println("start");
                     Toast.makeText(getApplicationContext(), "User successfully registered. Try login now!", Toast.LENGTH_LONG).show();
-
+                    System.out.println("end");
                     // Launch login activity
                     Intent intent = new Intent(
                             RegisterActivity.this,
@@ -145,8 +143,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             public void onErrorResponse(VolleyError error) {
                 int  statusCode = error.networkResponse.statusCode;
                 NetworkResponse response = error.networkResponse;
-
                 Log.d("testerror", "" + statusCode + " " + new String(response.data));
+
                 if (statusCode != 200) {
                     Toast.makeText(getApplicationContext(), new String(response.data), Toast.LENGTH_LONG).show();
                     hideDialog();

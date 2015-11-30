@@ -125,14 +125,12 @@ public class LoginActivity extends Activity {
                     session.setLogin(true);
 
                     JSONObject user = jObj.getJSONObject("user");
-
                     String uid = user.getString("id");
                     String name = user.getString("name");
                     String email = user.getString("email");
-                    String created_at = user.getString("created_at");
 
                     // Inserting row in users table
-                    db.addUser(name, email, uid, created_at);
+                    db.addUser(name, email, uid);
 
                     // Launch main activity
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -149,11 +147,10 @@ public class LoginActivity extends Activity {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-
                 int  statusCode = error.networkResponse.statusCode;
                 NetworkResponse response = error.networkResponse;
-
                 Log.d("testerror", "" + statusCode + " " + new String(response.data));
+
                 if (statusCode != 200) {
                     Toast.makeText(getApplicationContext(), new String(response.data), Toast.LENGTH_LONG).show();
                     hideDialog();
