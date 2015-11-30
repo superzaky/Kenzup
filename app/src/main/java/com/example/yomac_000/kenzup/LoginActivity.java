@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -117,40 +119,25 @@ public class LoginActivity extends Activity {
                 hideDialog();
 
                 try {
-                    //Removing hidden characters
-                    response = response.substring(response.indexOf("{"), response.lastIndexOf("}") + 1);
+                    System.out.println(response);
                     JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
 
-                    // Check for error node in json
-                    if (!error) {
-                        // user successfully logged in
-                        // Create login session
-                        session.setLogin(true);
+                    session.setLogin(true);
 
-                        // Now store the user in SQLite
-                        String uid = jObj.getString("uid");
+                    JSONObject user = jObj.getJSONObject("user");
 
-                        JSONObject user = jObj.getJSONObject("user");
-                        String name = user.getString("name");
-                        String email = user.getString("email");
-                        String created_at = user
-                                .getString("created_at");
+                    String uid = user.getString("id");
+                    String name = user.getString("name");
+                    String email = user.getString("email");
+                    String created_at = user.getString("created_at");
 
-                        // Inserting row in users table
-                        db.addUser(name, email, uid, created_at);
+                    // Inserting row in users table
+                    db.addUser(name, email, uid, created_at);
 
-                        // Launch main activity
-                        Intent intent = new Intent(LoginActivity.this,
-                                MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        // Error in login. Get the error message
-                        String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(getApplicationContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
-                    }
+                    // Launch main activity
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
                 } catch (JSONException e) {
                     // JSON error
                     e.printStackTrace();
@@ -162,10 +149,15 @@ public class LoginActivity extends Activity {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Login Error: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
-                hideDialog();
+
+                int  statusCode = error.networkResponse.statusCode;
+                NetworkResponse response = error.networkResponse;
+
+                Log.d("testerror", "" + statusCode + " " + new String(response.data));
+                if (statusCode != 200) {
+                    Toast.makeText(getApplicationContext(), new String(response.data), Toast.LENGTH_LONG).show();
+                    hideDialog();
+                }
             }
         }) {
 

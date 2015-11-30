@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -115,39 +116,24 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 hideDialog();
 
                 try {
-                    //Removing hidden characters
-                    response = response.substring(response.indexOf("{"), response.lastIndexOf("}") + 1);
-                    JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
-                    if (!error) {
-                        // User successfully stored in MySQL
-                        // Now store the user in sqlite
-                        String uid = jObj.getString("uid");
+                    JSONObject user = new JSONObject(response);
 
-                        JSONObject user = jObj.getJSONObject("user");
-                        String name = user.getString("name");
-                        String email = user.getString("email");
-                        String created_at = user.getString("created_at");
+                    String uid = user.getString("id");
+                    String name = user.getString("name");
+                    String email = user.getString("email");
+                    String created_at = user.getString("created_at");
 
-                        // Inserting row in users table
-                        db.addUser(name, email, uid, created_at);
+                    // Inserting row in users table
+                    db.addUser(name, email, uid, created_at);
 
-                        Toast.makeText(getApplicationContext(), "User successfully registered. Try login now!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "User successfully registered. Try login now!", Toast.LENGTH_LONG).show();
 
-                        // Launch login activity
-                        Intent intent = new Intent(
-                                RegisterActivity.this,
-                                LoginActivity.class);
-                        startActivity(intent);
-                        finish();
-                    } else {
-
-                        // Error occurred in registration. Get the error
-                        // message
-                        String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(getApplicationContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
-                    }
+                    // Launch login activity
+                    Intent intent = new Intent(
+                            RegisterActivity.this,
+                            LoginActivity.class);
+                    startActivity(intent);
+                    finish();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -157,10 +143,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Registration Error: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
-                hideDialog();
+                int  statusCode = error.networkResponse.statusCode;
+                NetworkResponse response = error.networkResponse;
+
+                Log.d("testerror", "" + statusCode + " " + new String(response.data));
+                if (statusCode != 200) {
+                    Toast.makeText(getApplicationContext(), new String(response.data), Toast.LENGTH_LONG).show();
+                    hideDialog();
+                }
             }
         }) {
 
