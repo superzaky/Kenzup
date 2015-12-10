@@ -119,11 +119,9 @@ public class LoginActivity extends Activity {
                 hideDialog();
 
                 try {
-                    System.out.println(response);
-                    JSONObject jObj = new JSONObject(response);
 
                     session.setLogin(true);
-
+                    JSONObject jObj = new JSONObject(response);
                     JSONObject user = jObj.getJSONObject("user");
                     String uid = user.getString("id");
                     String name = user.getString("name");
@@ -138,7 +136,6 @@ public class LoginActivity extends Activity {
                     finish();
                 } catch (JSONException e) {
                     // JSON error
-                    e.printStackTrace();
                     Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
 
