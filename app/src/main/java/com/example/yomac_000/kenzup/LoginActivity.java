@@ -20,6 +20,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
+
+import api.LoginRequest;
 import app.AppConfig;
 import app.AppController;
 import helper.DatabaseHelper;
@@ -110,16 +112,37 @@ public class LoginActivity extends Activity {
         pDialog.setMessage("Logging in ...");
         showDialog();
 
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.getUrlLogin(), new Response.Listener<String>() {
+        LoginRequest loginRequest = new LoginRequest(Request.Method.POST, AppConfig.getUrlLogin(), ReqSuccessListener(), ReqErrorListener()) {
 
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("email", email);
+                params.put("password", password);
+                return params;
+            }
+        };
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(loginRequest, tag_string_req);
+    }
+
+    private void showDialog() {
+        if (!pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hideDialog() {
+        if (pDialog.isShowing())
+            pDialog.dismiss();
+    }
+
+    private Response.Listener<String> ReqSuccessListener() {
+        return new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.d(TAG, "Login Response: " + response.toString());
                 hideDialog();
-
                 try {
-
                     session.setLogin(true);
                     JSONObject jObj = new JSONObject(response);
                     JSONObject user = jObj.getJSONObject("user");
@@ -138,46 +161,22 @@ public class LoginActivity extends Activity {
                     // JSON error
                     Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
-
             }
-        }, new Response.ErrorListener() {
+        };
+    }
 
+    private Response.ErrorListener ReqErrorListener() {
+        return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 int  statusCode = error.networkResponse.statusCode;
                 NetworkResponse response = error.networkResponse;
                 Log.d("testerror", "" + statusCode + " " + new String(response.data));
-
                 if (statusCode != 200) {
                     Toast.makeText(getApplicationContext(), new String(response.data), Toast.LENGTH_LONG).show();
                     hideDialog();
                 }
             }
-        }) {
-
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting parameters to login url
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("email", email);
-                params.put("password", password);
-
-                return params;
-            }
-
         };
-
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-    }
-
-    private void showDialog() {
-        if (!pDialog.isShowing())
-            pDialog.show();
-    }
-
-    private void hideDialog() {
-        if (pDialog.isShowing())
-            pDialog.dismiss();
     }
 }
