@@ -1,35 +1,15 @@
 package com.example.yomac_000.kenzup;
 
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import org.json.JSONException;
-import org.json.JSONObject;
-import java.util.HashMap;
-import java.util.Map;
-
-import api.LoginRequest;
-import app.AppConfig;
-import app.AppController;
 import helper.DatabaseHelper;
 import helper.SessionManager;
-import model.User;
-import retrofit.Callback;
-import retrofit.RetrofitError;
 import services.LoginService;
 
 /**
@@ -41,7 +21,7 @@ public class LoginActivity extends Activity {
     private Button btnLinkToRegister;
     private EditText inputEmail;
     private EditText inputPassword;
-    private ProgressDialog pDialog;
+    private static ProgressDialog pDialog;
     private SessionManager session;
     private DatabaseHelper db;
 
@@ -49,7 +29,6 @@ public class LoginActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         inputEmail = (EditText) findViewById(R.id.email);
         inputPassword = (EditText) findViewById(R.id.password);
         btnLogin = (Button) findViewById(R.id.btnLogin);
@@ -58,10 +37,8 @@ public class LoginActivity extends Activity {
         // Progress dialog
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
-
         // SQLite database handler
         db = new DatabaseHelper(getApplicationContext());
-
         // Session manager
         session = new SessionManager(getApplicationContext());
 
@@ -72,14 +49,12 @@ public class LoginActivity extends Activity {
             startActivity(intent);
             finish();
         }
-
         // Login button Click Event
         btnLogin.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
                 String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
-
                 // Check for empty data in the form
                 if (!email.isEmpty() && !password.isEmpty()) {
                     // login user
@@ -91,9 +66,7 @@ public class LoginActivity extends Activity {
                             .show();
                 }
             }
-
         });
-
         // Link to Register Screen
         btnLinkToRegister.setOnClickListener(new View.OnClickListener() {
 
@@ -104,7 +77,6 @@ public class LoginActivity extends Activity {
                 finish();
             }
         });
-
     }
 
     /**
@@ -113,10 +85,17 @@ public class LoginActivity extends Activity {
     private void checkLogin(final String email, final String password) {
         // Tag used to cancel the request
         String tag_string_req = "req_login";
-
         pDialog.setMessage("Logging in ...");
         showDialog();
-        new LoginService().Execute(email, password, new UiCallback(), getApplicationContext());
+        new LoginService().Execute(email, password, getApplicationContext(), session);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     private void showDialog() {
@@ -124,68 +103,8 @@ public class LoginActivity extends Activity {
             pDialog.show();
     }
 
-    private void hideDialog() {
+    public static void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
-    }
-
-    private Response.Listener<String> ReqSuccessListener() {
-        return new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.d(TAG, "Login Response: " + response.toString());
-                hideDialog();
-                try {
-                    session.setLogin(true);
-                    JSONObject jObj = new JSONObject(response);
-                    JSONObject user = jObj.getJSONObject("user");
-                    String uid = user.getString("id");
-                    String name = user.getString("name");
-                    String email = user.getString("email");
-
-                    // Inserting row in users table
-                    db.addUser(name, email, uid);
-
-                    // Launch main activity
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                } catch (JSONException e) {
-                    // JSON error
-                    Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            }
-        };
-    }
-
-    private Response.ErrorListener ReqErrorListener() {
-        return new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                int  statusCode = error.networkResponse.statusCode;
-                NetworkResponse response = error.networkResponse;
-                Log.d("testerror", "" + statusCode + " " + new String(response.data));
-                if (statusCode != 200) {
-                    Toast.makeText(getApplicationContext(), new String(response.data), Toast.LENGTH_LONG).show();
-                    hideDialog();
-                }
-            }
-        };
-    }
-
-    private class UiCallback implements Callback<User> {
-
-        @Override
-        public void success(User userResponse, retrofit.client.Response response) {
-            System.out.println("uicallback succes");
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            //Assume we have no connection, since error is null
-            if (error == null) {
-                Snackbar.make(findViewById(R.id.rootView), "No internet connection", Snackbar.LENGTH_SHORT).show();
-            }
-        }
     }
 }

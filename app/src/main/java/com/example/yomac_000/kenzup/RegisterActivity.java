@@ -74,9 +74,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String name = etUsername.getText().toString();
         String password = etPassword.getText().toString().trim();
         String confirmPassword = etConfirmPassword.getText().toString().trim();
-//        user.setEmail(email);
-//        user.setPassword(password);
-//        user.setName(name);
 
         if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(getApplicationContext(),
