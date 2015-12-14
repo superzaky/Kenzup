@@ -8,6 +8,16 @@ public class User {
     private String email;
     private String password;
 
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
+    public boolean success;
+
     public String getName() {
         return name;
     }

@@ -63,7 +63,7 @@ public class UploadService {
                         Notify image was uploaded successfully
                         */
                         if (imageResponse.success) {
-                            notificationHelper.createUploadedNotification(imageResponse);
+                            System.out.println("image response zakuy");
                         }
                     }
 

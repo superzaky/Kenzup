@@ -131,6 +131,8 @@ public class ImageActivity extends AppCompatActivity {
 
         @Override
         public void success(ImageResponse imageResponse, Response response) {
+            System.out.println("img rsponse "+ imageResponse);
+            System.out.println(" rsponse "+ response);
             clearInput();
         }
 

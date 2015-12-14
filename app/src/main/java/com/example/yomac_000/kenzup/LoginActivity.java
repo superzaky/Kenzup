@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +27,10 @@ import app.AppConfig;
 import app.AppController;
 import helper.DatabaseHelper;
 import helper.SessionManager;
+import model.User;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import services.LoginService;
 
 /**
  * A login screen that offers login via email/password.
@@ -111,19 +116,7 @@ public class LoginActivity extends Activity {
 
         pDialog.setMessage("Logging in ...");
         showDialog();
-
-        LoginRequest loginRequest = new LoginRequest(Request.Method.POST, AppConfig.getUrlLogin(), ReqSuccessListener(), ReqErrorListener()) {
-
-            protected Map<String, String> getParams() {
-                // Posting parameters to login url
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("email", email);
-                params.put("password", password);
-                return params;
-            }
-        };
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(loginRequest, tag_string_req);
+        new LoginService().Execute(email, password, new UiCallback(), getApplicationContext());
     }
 
     private void showDialog() {
@@ -178,5 +171,21 @@ public class LoginActivity extends Activity {
                 }
             }
         };
+    }
+
+    private class UiCallback implements Callback<User> {
+
+        @Override
+        public void success(User userResponse, retrofit.client.Response response) {
+            System.out.println("uicallback succes");
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            //Assume we have no connection, since error is null
+            if (error == null) {
+                Snackbar.make(findViewById(R.id.rootView), "No internet connection", Snackbar.LENGTH_SHORT).show();
+            }
+        }
     }
 }
